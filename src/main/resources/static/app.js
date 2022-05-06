@@ -17,15 +17,7 @@ async function onNewContactSubmit(e)
     const email = newContactForm.querySelector("input#email").value;
     const address = newContactForm.querySelector("input#address").value;
 
-    // Create form
-    /*const form = new FormData();
-    form.append("name", name.value);
-    form.append("lastName", lastName.value);
-    form.append("phoneNumber", phoneNumber.value);
-    form.append("email", email.value);
-    form.append("address", address.value);*/
-
-    // Send form data
+    // Send new contact data
     try
     {
         const api = await fetch(`${window.location.href}contact/new`,
