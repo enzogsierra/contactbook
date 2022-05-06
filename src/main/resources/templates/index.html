@@ -103,7 +103,7 @@
                     <table class="table table-light table-striped">
                         <thead>
                             <tr>
-                                <th>Photo</th>
+                                <th></th>
                                 <th>Name</th>
                                 <th>Phone number</th>
                                 <th>Email</th>
@@ -112,12 +112,18 @@
                         </thead>
 
                         <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                            <tr th:each="contact: ${contacts}">
+                                <td class="text-center">
+                                    <img th:src="@{/images/{name} (name = ${contact.pictureUrl})}" class="avatar">
+                                </td>
+                                <td th:text="${contact.name} + ' ' + ${contact.lastName}"></td>
+                                <td>
+                                    <a th:href="'tel:' + ${contact.phoneNumber}" th:text="${contact.phoneNumber}"></a>
+                                </td>
+                                <td>
+                                    <a th:href="'mailto:' + ${contact.email}" th:text="${contact.email}"></a>
+                                </td>
+                                <td th:text="${contact.address}"></td>
                             </tr>
                         </tbody>
                     </table>
