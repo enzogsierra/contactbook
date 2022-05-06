@@ -1,21 +1,23 @@
 package com.example.contactsbook.controller;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import com.example.contactsbook.model.Contact;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
 @RequestMapping("/contact")
 public class ApiController 
 {
-    @PostMapping(value = "/new")
-    public int newContact(@RequestBody Contact contact)
+    @PostMapping("/new")
+    public int newContact(Contact contact, @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException
     {
         int statusCode = 200;
         
@@ -36,12 +38,12 @@ public class ApiController
         // OK - Create new contact
         if(statusCode == 200)
         {
+            
         }
 
         // Return statusCode
         return statusCode;
     }
-
 
 
     //
