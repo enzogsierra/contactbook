@@ -34,8 +34,12 @@ public class IContactServiceImpl implements IContactService
 
     @Override
     public void save(Contact contact) {
-        // TODO Auto-generated method stub
-        
+        contactRepository.save(contact);
+    }
+
+    @Override
+    public void update(Contact contact) {
+        contactRepository.save(contact);
     }
 
     @Override

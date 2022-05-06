@@ -10,5 +10,6 @@ public interface IContactService
     Contact findById(int id);
     
     void save(Contact contact);
+    void update(Contact contact);
     void delete(int id);
 }

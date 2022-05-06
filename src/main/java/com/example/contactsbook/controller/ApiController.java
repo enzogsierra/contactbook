@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import com.example.contactsbook.model.Contact;
+import com.example.contactsbook.service.IContactService;
+import com.example.contactsbook.service.ImageService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/contact")
 public class ApiController 
 {
+    @Autowired
+    private IContactService contactService;
+
+    @Autowired
+    private ImageService imageService;
+
+
     @PostMapping("/new")
     public int newContact(Contact contact, @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException
     {
@@ -36,9 +46,19 @@ public class ApiController
         else if(addressLen >= 128) statusCode = 400;
 
         // OK - Create new contact
-        if(statusCode == 200)
+        if(statusCode == 200) 
         {
-            
+            // Save image
+            String filename = "default.jpg"; // Default filename
+
+            if(!pictureFile.isEmpty()) // There's a picture
+            {
+                filename = imageService.saveImage(pictureFile); // Save image and get the returned filename
+            }
+            contact.setPictureUrl(filename); // Set picture filename
+
+            // Save contact
+            contactService.save(contact);
         }
 
         // Return statusCode
@@ -46,7 +66,7 @@ public class ApiController
     }
 
 
-    //
+    // Utils
     public static boolean isValidEmail(String email)
     {
         String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
