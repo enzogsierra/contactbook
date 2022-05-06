@@ -1,9 +1,11 @@
-package com.example.contactsbook;
+package com.example.contactsbook.repository;
 
 import com.example.contactsbook.model.Contact;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 
-public interface repository extends JpaRepository<Contact, Integer> {
+@Repository
+public interface ContactRepository extends JpaRepository<Contact, Integer> {
     
 }

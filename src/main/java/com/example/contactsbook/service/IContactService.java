@@ -1,9 +1,14 @@
 package com.example.contactsbook.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
+import com.example.contactsbook.model.Contact;
 
 
-@Service
-public interface IContactService {
+public interface IContactService 
+{
+    List<Contact> all();
+    Contact findById(int id);
     
+    void save(Contact contact);
+    void delete(int id);
 }
