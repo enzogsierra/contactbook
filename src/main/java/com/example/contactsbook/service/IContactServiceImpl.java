@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class IContactServiceImpl implements IContactService
 {
     @Autowired 
-    ContactRepository contactRepository;
+    private ContactRepository contactRepository;
     
 
     @Override
