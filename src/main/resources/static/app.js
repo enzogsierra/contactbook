@@ -1,11 +1,15 @@
 const newContactForm = document.querySelector("#newContactForm");
+const contactsTable = document.querySelector("table>tbody#contactsTable");
+
 
 document.addEventListener("DOMContentLoaded", () =>
 {
     newContactForm.addEventListener("submit", onNewContactSubmit);
+    contactsTable.addEventListener("click", onContactsTableClick);
 });
 
 
+// New contact form handler
 async function onNewContactSubmit(e)
 {
     e.preventDefault();
@@ -31,11 +35,56 @@ async function onNewContactSubmit(e)
             newContactForm.reset(); // Reset form data
             document.querySelector("button#newContactBtn").click(); // Hide "new contact" form
 
-            alert("Contact added successfully!"); // Show alert
+            Swal.fire(
+            {
+                position: 'top-end',
+                icon: 'success',
+                title: 'New contact added successfully',
+                showConfirmButton: false,
+                timer: 1000
+            });
+        }
+        else // Error
+        {
+            Swal.fire(
+            {
+                icon: 'error',
+                title: 'An error ocurred',
+                text: 'Check the data and try again'
+            });
         }
     }
     catch
     {
+        Swal.fire(
+        {
+            icon: 'error',
+            title: 'An error ocurred',
+            text: 'Sorry, there was an internal error. Try again later.'
+        });
+    }
+}
 
+
+// Contacts table handler
+function onContactsTableClick(e)
+{
+
+    // Check if user clicked on a contact avatar
+    if(e.target.nodeName === "IMG" && e.target.className === "avatar") 
+    {
+        const imgUrl = e.target.src;
+        const imgTitle = e.target.alt;
+
+        console.log(imgUrl);
+        console.log(imgTitle);
+
+        Swal.fire(
+        {
+            title: imgTitle,
+            imageUrl: imgUrl,
+            imageWidth: 480,
+            imageHeight: 480,
+        });
     }
 }
