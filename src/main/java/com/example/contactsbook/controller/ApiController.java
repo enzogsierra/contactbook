@@ -8,7 +8,9 @@ import com.example.contactsbook.service.IContactService;
 import com.example.contactsbook.service.ImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,7 @@ public class ApiController
     private ImageService imageService;
 
 
+    // New contact
     @PostMapping("/new")
     public int newContact(Contact contact, @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException
     {
@@ -62,6 +65,25 @@ public class ApiController
         }
 
         // Return statusCode
+        return statusCode;
+    }
+
+
+    // Delete contact
+    @DeleteMapping("/delete")
+    public int deleteContact(@RequestParam int id)
+    {
+        int statusCode = 200;
+
+        // Verify if contact id exists
+        Contact contact = contactService.findById(id);
+
+        if(contact != null) // Valid contact id
+        {
+            contactService.delete(id);
+        }
+        else statusCode = 400; // Invalid contact
+       
         return statusCode;
     }
 

@@ -44,7 +44,6 @@ public class IContactServiceImpl implements IContactService
 
     @Override
     public void delete(int id) {
-        // TODO Auto-generated method stub
-        
+        contactRepository.deleteById(id);
     }
 }

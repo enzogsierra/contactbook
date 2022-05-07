@@ -67,17 +67,13 @@ async function onNewContactSubmit(e)
 
 
 // Contacts table handler
-function onContactsTableClick(e)
+async function onContactsTableClick(e)
 {
-
-    // Check if user clicked on a contact avatar
+    // User clicked on a contact avatar
     if(e.target.nodeName === "IMG" && e.target.className === "avatar") 
     {
-        const imgUrl = e.target.src;
-        const imgTitle = e.target.alt;
-
-        console.log(imgUrl);
-        console.log(imgTitle);
+        const imgUrl = e.target.src; // Get img source
+        const imgTitle = e.target.alt; // Get img alternative text
 
         Swal.fire(
         {
@@ -86,5 +82,92 @@ function onContactsTableClick(e)
             imageWidth: 480,
             imageHeight: 480,
         });
+    }
+
+    // User clicked on edit button
+    if(e.target.nodeName === "BUTTON" && e.target.id === "btn-edit-contact")
+    {
+        //const id = e.target.parentElement.querySelector("input#hidden-contact-id").value; // Get contact id
+
+        let html = "";
+
+
+    }
+
+    if(e.target.nodeName === "BUTTON" && e.target.id === "btn-delete-contact")
+    {
+        const tr = e.target.parentElement.parentElement.parentElement.parentElement; // Get <tr>
+        const id = tr.getAttribute("contact-id"); // Get contact id
+        const name = tr.querySelector("td#contact-name").innerText; // Get contact name
+
+        // Show alert confirmation
+        Swal.fire
+        ({
+            title: `Delete ${name}?`,
+            text: "You are about to delete this contact, this action cannot be reverted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        })
+        .then(async (result) =>
+        {
+            if(result.isConfirmed) // "Yes"
+            {
+                // Generate form
+                const form = new FormData()
+                form.append("id", id); // Append contact id
+
+                // Send fetch
+                const api = await fetch(`${window.location.href}contact/delete`,
+                {
+                    method: "DELETE",
+                    body: form
+                });
+
+                const response = await api.text(); // Get status code
+                console.log(response);
+
+                if(response == 200) // Contact deleted
+                {
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Contact deleted',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+                else // Error
+                {
+                    Swal.fire(
+                    {
+                        icon: 'error',
+                        title: 'An error ocurred',
+                        text: "Contact couldn't be deleted, try reloading page"
+                    });
+                }
+            }
+        })
+
+        /*
+        const tr = e.target.parentElement.parentElement.parentElement.parentElement; // Get <tr>
+        const id = tr.getAttribute("contact-id"); // Get contact id
+
+        // Generate form
+        const form = new FormData()
+        form.append("id", id);
+
+        // Send fetch
+        const api = await fetch(`${window.location.href}contact/delete`,
+        {
+            method: "DELETE",
+            body: form
+        });
+
+        const response = await api.text();
+        console.log(response);*/
     }
 }

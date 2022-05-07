@@ -112,22 +112,44 @@
                                 <th>Phone number</th>
                                 <th>Email</th>
                                 <th>Address</th>
+                                <th></th>
                             </tr>
                         </thead>
 
                         <tbody id="contactsTable">
-                            <tr th:each="contact: ${contacts}">
+                            <tr th:each="contact: ${contacts}" th:contact-id="${contact.id}">
                                 <td class="text-center">
                                     <img th:src="@{/images/{name} (name = ${contact.pictureUrl})}" class="avatar" th:alt="${contact.name} + ' ' + ${contact.lastName} + '\'s avatar'">
                                 </td>
-                                <td th:text="${contact.name} + ' ' + ${contact.lastName}"></td>
-                                <td>
+
+                                <td id="contact-name" th:text="${contact.name} + ' ' + ${contact.lastName}">
+
+                                </td>
+
+                                <td id="contact-phoneNumber">
                                     <a th:href="'tel:' + ${contact.phoneNumber}" th:text="${contact.phoneNumber}"></a>
                                 </td>
-                                <td>
+
+                                <td id="contact-email">
                                     <a th:href="'mailto:' + ${contact.email}" th:text="${contact.email}"></a>
                                 </td>
-                                <td th:text="${contact.address}"></td>
+
+                                <td id="contact-address" th:text="${contact.address}">
+
+                                </td>
+
+                                <td class="dropdown">
+                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownContactHandler" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                    
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownContactHandler">
+                                        <li>
+                                            <button class="dropdown-item" id="btn-edit-contact">Edit</button>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item" id="btn-delete-contact">Delete</button>
+                                        </li>
+                                    </ul>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
