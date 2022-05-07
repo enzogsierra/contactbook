@@ -14,53 +14,51 @@ async function onNewContactSubmit(e)
 {
     e.preventDefault();
 
-    // Send new contact data
-    try
+    // Get form data
+    const newContactData = new FormData(newContactForm);
+
+    // Send form data
+    const api = await fetch(`${window.location.href}contact/new`,
     {
-        // Get form data
-        const newContactData = new FormData(newContactForm);
+        method: "POST",
+        body: newContactData
+    });
 
-        // Send form data
-        const api = await fetch(`${window.location.href}contact/new`,
+    // Check status code
+    const response = await api.json();
+    if(response.statusCode == 200) // OK - contact added
+    {
+        newContactForm.reset(); // Reset form data
+        document.querySelector("button#newContactBtn").click(); // Hide "new contact" form
+
+        // Add contact to contact list
+        addContactToTable
+        (
+            response.id, 
+            newContactData.get("name") + " " + newContactData.get("lastName"),
+            newContactData.get("phoneNumber"),
+            newContactData.get("email"),
+            newContactData.get("address"),
+            response.avatarUrl
+        );
+        
+
+        Swal.fire(
         {
-            method: "POST",
-            body: newContactData
+            position: 'top-end',
+            icon: 'success',
+            title: 'New contact added successfully',
+            showConfirmButton: false,
+            timer: 1000
         });
-
-
-        // Check responses
-        const response = await api.text();
-        if(response == 200) // OK - contact added
-        {
-            newContactForm.reset(); // Reset form data
-            document.querySelector("button#newContactBtn").click(); // Hide "new contact" form
-
-            Swal.fire(
-            {
-                position: 'top-end',
-                icon: 'success',
-                title: 'New contact added successfully',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        }
-        else // Error
-        {
-            Swal.fire(
-            {
-                icon: 'error',
-                title: 'An error ocurred',
-                text: 'Check the data and try again'
-            });
-        }
     }
-    catch
+    else // Error
     {
         Swal.fire(
         {
             icon: 'error',
             title: 'An error ocurred',
-            text: 'Sorry, there was an internal error. Try again later.'
+            text: 'Check the data and try again'
         });
     }
 }
@@ -126,11 +124,12 @@ async function onContactsTableClick(e)
                     body: form
                 });
 
-                const response = await api.text(); // Get status code
-                console.log(response);
-
+                // Check status code
+                const response = await api.text(); 
                 if(response == 200) // Contact deleted
                 {
+                    tr.remove(); // Remove <tr> element
+
                     Swal.fire(
                     {
                         position: 'top-end',
@@ -151,23 +150,48 @@ async function onContactsTableClick(e)
                 }
             }
         })
-
-        /*
-        const tr = e.target.parentElement.parentElement.parentElement.parentElement; // Get <tr>
-        const id = tr.getAttribute("contact-id"); // Get contact id
-
-        // Generate form
-        const form = new FormData()
-        form.append("id", id);
-
-        // Send fetch
-        const api = await fetch(`${window.location.href}contact/delete`,
-        {
-            method: "DELETE",
-            body: form
-        });
-
-        const response = await api.text();
-        console.log(response);*/
     }
+}
+
+
+function addContactToTable(id, fullName, phoneNumber, email, address, avatarUrl)
+{
+    // Create element
+    const tr = document.createElement("TR");
+    tr.setAttribute("contact-id", `${id}`);
+
+    // Generate HTML
+    let html = "";
+    html += `<td class="text-center">`;
+    html += `   <img src="images/${avatarUrl}" class="avatar" alt="${fullName}'s avatar">`;
+    html += `</td>`;
+
+    html += `<td id="contact-name">${fullName}</td>`;
+
+    html += `<td id="contact-phoneNumber">`;
+    html += `   <a href="tel:${phoneNumber}">${phoneNumber}</a>`;
+    html += `</td>`;
+
+    html += `<td id="contact-email">`;
+    html += `   <a href="mailto:${email}">${email}</a>`;
+    html += `</td>`;
+
+    html += `<td id="contact-address">${address}</td>`;
+
+    html += `<td class="dropdown">`;
+    html += `   <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownContactHandler" data-bs-toggle="dropdown" aria-expanded="false"></a>`;
+    html += `   <ul class="dropdown-menu" aria-labelledby="dropdownContactHandler">`;
+    html += `       <li>`;
+    html += `           <button class="dropdown-item" id="btn-edit-contact">Edit</button>`;
+    html += `       </li>`;
+    html += `       <li>`;
+    html += `           <button class="dropdown-item" id="btn-delete-contact">Delete</button>`;
+    html += `       </li>`;
+    html += `   </ul>`;
+    html += `</td>`;
+
+    tr.innerHTML = html;
+
+    // Append
+    contactsTable.appendChild(tr);
 }

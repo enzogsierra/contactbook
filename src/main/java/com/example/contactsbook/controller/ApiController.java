@@ -8,9 +8,9 @@ import com.example.contactsbook.service.IContactService;
 import com.example.contactsbook.service.ImageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +29,8 @@ public class ApiController
 
 
     // New contact
-    @PostMapping("/new")
-    public int newContact(Contact contact, @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException
+    @PostMapping(value = {"/new"}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String newContact(Contact contact, @RequestParam("pictureFile") MultipartFile pictureFile) throws IOException
     {
         int statusCode = 200;
         
@@ -40,6 +40,7 @@ public class ApiController
         int phoneNumberLen = contact.getPhoneNumber().length();
         String email = contact.getEmail();
         int addressLen = contact.getAddress().length();
+        String filename = "default.jpg"; // Default filename
 
         // Check form values
         if(!(nameLen >= 1 && nameLen <= 64)) statusCode = 400;
@@ -51,9 +52,6 @@ public class ApiController
         // OK - Create new contact
         if(statusCode == 200) 
         {
-            // Save image
-            String filename = "default.jpg"; // Default filename
-
             if(!pictureFile.isEmpty()) // There's a picture
             {
                 filename = imageService.saveImage(pictureFile); // Save image and get the returned filename
@@ -65,7 +63,7 @@ public class ApiController
         }
 
         // Return statusCode
-        return statusCode;
+        return "{\"statusCode\": " + statusCode + ", \"id\": \"" + contact.getId() + "\", \"avatarUrl\": \"" + filename + "\"}";
     }
 
 
