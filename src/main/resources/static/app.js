@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () =>
 {
     newContactForm.addEventListener("submit", onNewContactSubmit);
     contactsTable.addEventListener("click", onContactsTableClick);
+
+    sortContactList();
 });
 
 
@@ -212,7 +214,7 @@ async function onContactsTableClick(e)
                 });
             }
 
-            //
+            // Reset values
             isEditing = false;
             originalHtml = "";
         }
@@ -372,4 +374,29 @@ function addContactToTable(id, name, lastName, phoneNumber, email, address, avat
 
     // Append
     contactsTable.appendChild(tr);
+    sortContactList();
+}
+
+
+function sortContactList()
+{
+    const body = document.querySelector("tbody#contactsTable");
+    const rows = Array.from(body.querySelectorAll("tr")); // Create an array with all tr elements
+
+    // Sort 
+    let sortedList = rows.sort((a, b) =>
+    {
+        const aVal = a.querySelector("span#contact-name").textContent.trim() + " " + a.querySelector("span#contact-lastName").textContent.trim(); // Get full name
+        const bVal = b.querySelector("span#contact-name").textContent.trim() + " " + b.querySelector("span#contact-lastName").textContent.trim();
+        return aVal > bVal ? (1) : (-1); // Compare
+    });
+    
+    // Empty the table body
+    while(body.firstChild)
+    {
+        body.removeChild(body.firstChild);
+    }
+    
+    // Append the sorted list
+    body.append(...sortedList);
 }

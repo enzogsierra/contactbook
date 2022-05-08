@@ -1,7 +1,6 @@
 package com.example.contactsbook.controller;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.example.contactsbook.model.Contact;
@@ -96,7 +95,7 @@ public class ApiController
         {
             if(avatarFile.isEmpty()) // Avatar remains the same
             {
-                contact.setPictureUrl(tmp.getPictureUrl()); // Keep the picture url
+                avatarUrl = tmp.getPictureUrl(); // Keep the same avatar
             }
             else // Update avatar
             {
@@ -106,12 +105,11 @@ public class ApiController
                 }
 
                 avatarUrl = imageService.saveImage(avatarFile); // Create new avatar
-                contact.setPictureUrl(avatarUrl); // Set new avatar url
             }
-
-            // Update contact info
-            contactService.save(contact);
             
+            // Update contact info
+            contact.setPictureUrl(avatarUrl);
+            contactService.save(contact);
         }
 
         return "{\"statusCode\": " + statusCode + ", \"avatarUrl\": \"" + avatarUrl + "\"}";
