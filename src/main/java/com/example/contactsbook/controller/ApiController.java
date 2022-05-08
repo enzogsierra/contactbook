@@ -1,6 +1,7 @@
 package com.example.contactsbook.controller;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import com.example.contactsbook.model.Contact;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +66,55 @@ public class ApiController
 
         // Return statusCode
         return "{\"statusCode\": " + statusCode + ", \"id\": \"" + contact.getId() + "\", \"avatarUrl\": \"" + filename + "\"}";
+    }
+
+
+    @PutMapping("/edit")
+    public String editContact(Contact contact, @RequestParam("avatarFile") MultipartFile avatarFile) throws IOException
+    {
+        Contact tmp = contactService.findById(contact.getId()); // Get actual contact data
+        int statusCode = 200;
+        
+        // Get values
+        int nameLen = contact.getName().length();
+        int lastNameLen = contact.getLastName().length();
+        int phoneNumberLen = contact.getPhoneNumber().length();
+        String email = contact.getEmail();
+        int addressLen = contact.getAddress().length();
+        String avatarUrl = "default.jpg"; // Default avatar
+
+        // Check form values
+        if(tmp == null) statusCode = 400;
+        else if(!(nameLen >= 1 && nameLen <= 64)) statusCode = 400;
+        else if(!(lastNameLen >= 1 && lastNameLen <= 64)) statusCode = 400;
+        else if(!(phoneNumberLen >= 1 && phoneNumberLen <= 15)) statusCode = 400;
+        else if(!email.isEmpty() && !isValidEmail(email)) statusCode = 400;
+        else if(addressLen >= 128) statusCode = 400;
+
+        // OK - Update contact
+        if(statusCode == 200)
+        {
+            if(avatarFile.isEmpty()) // Avatar remains the same
+            {
+                contact.setPictureUrl(tmp.getPictureUrl()); // Keep the picture url
+            }
+            else // Update avatar
+            {
+                if(!tmp.getPictureUrl().equals("default.jpg")) // Check if contact avatar isn't the default one
+                {
+                    imageService.deleteImage(tmp.getPictureUrl()); // Delete avatar
+                }
+
+                avatarUrl = imageService.saveImage(avatarFile); // Create new avatar
+                contact.setPictureUrl(avatarUrl); // Set new avatar url
+            }
+
+            // Update contact info
+            contactService.save(contact);
+            
+        }
+
+        return "{\"statusCode\": " + statusCode + ", \"avatarUrl\": \"" + avatarUrl + "\"}";
     }
 
 
