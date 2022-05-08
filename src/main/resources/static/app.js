@@ -1,11 +1,13 @@
 const newContactForm = document.querySelector("#newContactForm");
 const contactsTable = document.querySelector("table>tbody#contactsTable");
+const searchInput = document.querySelector("input#searchContact");
 
 
 document.addEventListener("DOMContentLoaded", () =>
 {
     newContactForm.addEventListener("submit", onNewContactSubmit);
     contactsTable.addEventListener("click", onContactsTableClick);
+    searchInput.addEventListener("input", searchContact);
 
     sortContactList();
 });
@@ -110,7 +112,7 @@ async function onContactsTableClick(e)
 
         //
         isEditing = true;
-        originalHtml = tr.innerHTML;
+        originalHtml = tr.innerHTML; // Save original html in case user clicks on cancel button
 
         tr.innerHTML =
         `
@@ -300,7 +302,7 @@ function addContactToTable(id, name, lastName, phoneNumber, email, address, avat
     tr.setAttribute("contact-id", `${id}`);
 
     // Generate HTML
-    const html =
+    tr.innerHTML =
     `
         <!-- Avatar -->
         <td class="text-center">
@@ -341,47 +343,17 @@ function addContactToTable(id, name, lastName, phoneNumber, email, address, avat
         </td>
     `;
 
-    /*let html = "";
-    html += `<td class="text-center">`;
-    html += `   <img src="images/${avatarUrl}" class="avatar" alt="${fullName}'s avatar">`;
-    html += `</td>`;
-
-    html += `<td id="contact-name">${fullName}</td>`;
-
-    html += `<td id="contact-phoneNumber">`;
-    html += `   <a href="tel:${phoneNumber}">${phoneNumber}</a>`;
-    html += `</td>`;
-
-    html += `<td id="contact-email">`;
-    html += `   <a href="mailto:${email}">${email}</a>`;
-    html += `</td>`;
-
-    html += `<td id="contact-address">${address}</td>`;
-
-    html += `<td class="dropdown">`;
-    html += `   <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownContactHandler" data-bs-toggle="dropdown" aria-expanded="false"></a>`;
-    html += `   <ul class="dropdown-menu" aria-labelledby="dropdownContactHandler">`;
-    html += `       <li>`;
-    html += `           <button class="dropdown-item" id="btn-edit-contact">Edit</button>`;
-    html += `       </li>`;
-    html += `       <li>`;
-    html += `           <button class="dropdown-item" id="btn-delete-contact">Delete</button>`;
-    html += `       </li>`;
-    html += `   </ul>`;
-    html += `</td>`;*/
-
-    tr.innerHTML = html;
-
     // Append
     contactsTable.appendChild(tr);
     sortContactList();
 }
 
 
+// Sorts contact list by name
 function sortContactList()
 {
     const body = document.querySelector("tbody#contactsTable");
-    const rows = Array.from(body.querySelectorAll("tr")); // Create an array with all tr elements
+    const rows = Array.from(body.querySelectorAll("tr")); // Create an array with all <tr> elements
 
     // Sort 
     let sortedList = rows.sort((a, b) =>
@@ -397,6 +369,26 @@ function sortContactList()
         body.removeChild(body.firstChild);
     }
     
-    // Append the sorted list
+    // Append the sorted list (<tr>)
     body.append(...sortedList);
+}
+
+
+function searchContact()
+{
+    const text = searchInput.value;
+
+    const exp = new RegExp(text, "i");
+    const rows = document.querySelectorAll("#contactsTable tr");
+
+    rows.forEach(row =>
+    {
+        row.style.display = "none"; // Hide row by default
+
+        const name = row.querySelector("#contact-name").textContent + " " + row.querySelector("#contact-lastName").textContent;
+        if(name.replace(/\s/g, " ").search(exp) !== -1)
+        {
+            row.style.display = "table-row";
+        }
+    });
 }
