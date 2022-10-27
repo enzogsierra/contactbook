@@ -1,0 +1,21 @@
+.icon
+{
+    height: 24px;
+    width: 24px;
+}
+
+.circle
+{
+    border-radius: 50%;
+}
+
+.avatar
+{
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+}
+.avatar:hover
+{
+    cursor: pointer;
+}

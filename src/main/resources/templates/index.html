@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Contact Book (AJAX)</title>
+        <link rel="shortcut icon" th:href="@{/icons/favicon.png}" type="image/x-icon">
+
+        <!-- CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <div class="bg-dark text-white py-4 mb-4">
+            <div class="container">
+                <header class="d-flex flex-wrap gap-4 justify-content-center align-items-center">
+                    <a th:href="@{/}" class="d-flex align-items-center gap-2 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <img th:src="@{/icons/favicon.png}" alt="Page logo" height="38" width="38">
+                        <h1 class="m-0">Contact Book - AJAX</h1>
+                    </a>
+                </header>
+            </div>
+        </div>
+
+        <main class="container-sm my-4">
+            <div class="text-end">
+                <button class="btn btn-primary" type="button" id="newContactBtn" data-bs-toggle="collapse" data-bs-target="#newContactFormCollapse" aria-expanded="false" aria-controls="newContactFormCollapse">
+                    New contact
+                </button>
+            </div>
+            <div class="collapse" id="newContactFormCollapse">
+                <div class="card my-2">
+                    <div class="card-body">
+                        <div class="text-end">
+                            <button type="button" class="btn-close" id="newContactBtn" data-bs-toggle="collapse" data-bs-target="#newContactFormCollapse" aria-expanded="false" aria-controls="newContactFormCollapse"></button>
+                        </div>
+
+                        <p class="mb-4 text-muted">* Required field</p>
+
+                        <form th:action="@{/contact/save}" method="POST" id="newContactForm" enctype="multipart/form-data">
+                            <!--  -->
+                            <div class="d-flex gap-2">
+                                <div class="w-100 mb-3">
+                                    <label class="mb-1 form-label" for="name">Name *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><img src="/icons/name.png" class="icon" alt="name"></span>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                    <p id="error-name" class="m-0 d-none form-text text-danger"></p>
+                                </div>
+
+                                <div class="w-100 mb-3">
+                                    <label class="mb-1 form-label" for="surname">Surname *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><img src="/icons/name.png" class="icon" alt="surname"></span>
+                                        <input type="text" class="form-control" id="surname" name="surname" required>
+                                    </div>
+                                    <p id="error-surname" class="m-0 d-none form-text text-danger"></p>
+                                </div>
+                            </div>
+
+                            <!--  -->
+                            <div class="d-flex gap-2">
+                                <div class="w-100 mb-3">
+                                    <label class="mb-1 form-label" for="phone">Phone number *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><img src="/icons/phone.png" class="icon" alt="phone"></span>
+                                        <input type="text" class="form-control" id="phone" name="phone" required>
+                                    </div>
+                                    <p id="error-phone" class="m-0 d-none form-text text-danger"></p>
+                                </div>
+                                <div class="w-100 mb-3">
+                                    <!--  -->
+                                    <label class="mb-1 form-label" for="email">Email address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><img src="/icons/email.png" class="icon" alt="email"></span>
+                                        <input type="text" class="form-control" id="email" name="email">
+                                    </div>
+                                    <p id="error-email" class="m-0 d-none form-text text-danger"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <div class="w-100 mb-3">
+                                    <label class="mb-1 form-label" for="address">Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><img src="/icons/address.png" class="icon" alt="address"></span>
+                                        <input type="text" class="form-control" id="address" name="address">
+                                    </div>
+                                    <p id="error-address" class="m-0 d-none form-text text-danger"></p>
+                                </div>
+                                <div class="w-100 mb-3">
+                                    <!--  -->
+                                    <label class="mb-1 form-label" for="avatar">Avatar</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><img src="/icons/picture.png" class="icon" alt="avatar"></span>
+                                        <input type="file" class="form-control" id="avatarFile" name="avatarFile">
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!--  -->
+                            <div class="mt-4">
+                                <button type="submit" class="w-100 btn btn-primary">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mt-4 card">
+                <!-- Header -->
+                <div class="card-header">
+                    <h2>Contacts</h2>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body">
+                    <div class="input-group mt-1 mb-4">
+                        <input type="search" class="form-control" id="searchContact" placeholder="Search contact by name" aria-label="Search">
+                        <span class="input-group-text"><img src="/icons/search.png" class="icon" alt="Search"></span>
+                    </div>
+
+                    <table class="table table-light table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Phone number</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="contactsTable">
+                            <tr th:each="contact: ${contacts}" th:contact-id="${contact.id}">
+                                <!-- Avatar -->
+                                <td class="text-center">
+                                    <img 
+                                        th:src="${@environment.getProperty('avatar.source.url')} + ${contact.avatarUrl}"
+                                        th:alt="${contact.name} + ' ' + ${contact.surname} + '\'s avatar'"
+                                        class="avatar"
+                                    >
+                                </td>
+
+                                <!-- Full name -->
+                                <td>
+                                    <span th:text="${contact.name}" id="contact-name"></span>
+                                    <span th:text="${contact.surname}" id="contact-surname"></span>
+                                </td>
+
+                                <!-- Phone number -->
+                                <td>
+                                    <a th:href="'tel:' + ${contact.phone}" th:text="${contact.phone}" id="contact-phone"></a>
+                                </td>
+
+                                <!-- Email -->
+                                <td>
+                                    <a th:href="'mailto:' + ${contact.email}" th:text="${contact.email}" id="contact-email"></a>
+                                </td>
+
+                                <!-- Address -->
+                                <td id="contact-address" th:text="${contact.address}"></td>
+
+                                <!-- Action buttons -->
+                                <td class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" role="button" id="dropdownContactHandler" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                    
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownContactHandler">
+                                        <li><button class="dropdown-item" id="btn-edit-contact">Edit</button></li>
+                                        <li><button class="dropdown-item" id="btn-delete-contact">Delete</button></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- .card/ -->
+        </main>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/app.js"></script>
+    </body>
+</html>
